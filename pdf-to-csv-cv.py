@@ -11,7 +11,9 @@ from imutils.perspective import four_point_transform
 from imutils.contours import sort_contours
 import argparse
 
-DEBUG = False
+from tqdm import tqdm
+
+DEBUG = True
 ROW_MIN_HEIGHT = 5 #in px
 COLUMN_MIN_WIDTH = 5
 PADDING = 2
@@ -25,7 +27,7 @@ def process_file(filename):
         csv_writer = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         pagen = 0
         #iterating through all pages
-        for page in doc.iter_pages():
+        for page in tqdm(doc.iter_pages(), desc="Iterlating pages...", position=0):
             pagen += 1
             if len(page.images) == 0:
                 print("Page %d: No Images found" % (pagen))
@@ -152,14 +154,14 @@ def extract_rows_columns(gray_image):
 
 
 
-    for idx_h, horizontal_bounding_box in enumerate(filtered_horizontal_bounding_boxes):
+    for idx_h, horizontal_bounding_box in tqdm(enumerate(filtered_horizontal_bounding_boxes), desc="Horizontal bounding boxes...", position=1):
         if idx_h == 0:
             continue
         hx_p,hy_p,hw_p,hh_p = filtered_horizontal_bounding_boxes[idx_h-1] #previous horizontal box
         hx_c,hy_c,hw_c,hh_c = horizontal_bounding_box
 
         extracted_columns = []
-        for idx_v, vertical_bounding_box in enumerate(filtered_vertical_bounding_boxes):
+        for idx_v, vertical_bounding_box in tqdm(enumerate(filtered_vertical_bounding_boxes), desc="Vertical bounding boxes...", position=2):
             if idx_v == 0:
                 continue
             vx_p,vy_p,vw_p,vh_p = filtered_vertical_bounding_boxes[idx_v-1] #previous horizontal box
